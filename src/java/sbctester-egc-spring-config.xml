@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="egcTester" class="sbctester.EgcTester">
+		<property name="username" value="genuisys|egcmaker"/>
+		<property name="pwd" value="Ozl+3XYeLQU="/>
+		<property name="sbcP2PApi" ref="sbcP2PApi"/>
+	</bean>
+	
+ 	<bean id="sbcP2PApi" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface" value="com.gtc.sbcapi.egc.WsDigiP2PSoap"/>
+        <property name="wsdlDocumentUrl" value="classpath:sbcegc.wsdl"/>
+        <property name="namespaceUri" value="http://digibanker.securitybank.com/services"/>
+        <property name="serviceName" value="wsDigiP2P"/>
+        <property name="portName" value="wsDigiP2PSoap"/>
+        <property name="endpointAddress" value="${gtc.sbcP2PApi.endpointAddress:https://dguat.securitybank.com/p2pv5a/service.asmx}"/>
+        <!-- 
+        <property name="endpointAddress" value="${gtc.sbcP2PApi.endpointAddress:https://digibanker.securitybank.com/webservice/p2pv2/service.asmx}"/>
+        -->        
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+				<property name="handlerResolver">
+					<bean class="sbctester.DebugSoapHandlerResolver"/>
+				</property>
+    </bean>
+
+	<util:map id="jaxwsCustomProperties">	
+		<entry key="com.sun.xml.ws.request.timeout">
+			<value type="java.lang.Integer">60000</value>
+		</entry>
+		<entry key="com.sun.xml.ws.connect.timeout">
+			<value type="java.lang.Integer">60000</value>
+		</entry>
+	</util:map> 	
+
+</beans>

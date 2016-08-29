@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="balanceInqTester" class="sbctester.BalanceInqTester">
+		<property name="companyCode" value="vmoney"/>
+		<property name="userId" value="systemmaker"/>
+		<property name="pw" value="VM0n3y"/>
+		<property name="sbcBalanceApi" ref="sbcBalanceApi"/>
+		<property name="sbcIbftApi" ref="sbcIbftApi"/>
+	</bean>
+	
+	<bean id="sbcBalanceApi" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="com.gtc.clproc.sbc.balance.WsCCBalInqSoap"/>
+		<property name="wsdlDocumentUrl" value="classpath:BalanceInquiry.wsdl"/>
+		<property name="namespaceUri" value="http://digibanker.securitybank.com/services"/>
+		<property name="serviceName" value="wsCCBalInq"/>
+		<property name="portName" value="wsCCBalInqSoap"/>
+		<property name="endpointAddress" value="https://digibanker.securitybank.com/webservice/wsCCAcctBalInq/Service.asmx"/>
+		<property name="customProperties" ref="jaxwsCustomProperties"/>
+		<property name="handlerResolver">
+			<bean class="sbctester.DebugSoapHandlerResolver"/>
+		</property>
+ 	</bean>
+
+<!-- 
+		<property name="endpointAddress" value="http://dev.genuisys.com/billspay/service.asmx"/>
+		<property name="endpointAddress" value="https://dguat.securitybank.com/billspay/service.asmx"/>
+ -->
+ 	
+	<bean id="sbcIbftApi" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="com.gtc.sbcapi.WsDigiIBFTSoap"/>
+		<property name="wsdlDocumentUrl" value="classpath:sbcibft.wsdl"/>
+		<property name="namespaceUri" value="http://digibanker.securitybank.com/services"/>
+		<property name="serviceName" value="wsDigiIBFT"/>
+		<property name="portName" value="wsDigiIBFTSoap"/>
+		<property name="endpointAddress" value="https://digibanker.securitybank.com/webservice/ibft/Service.asmx"/>
+		<!-- 
+		<property name="endpointAddress" value="http://203.167.114.121/digiibft/Service.asmx"/>
+		<property name="endpointAddress" value="http://dguat.securitybank.com/digiibft/Service.asmx"/>
+		<property name="endpointAddress" value="https://digibanker.securitybank.com/webservice/ibft/Service.asmx"/>
+		-->
+		<property name="customProperties" ref="jaxwsCustomProperties"/>
+ 	</bean>
+
+	<util:map id="jaxwsCustomProperties">	
+		<entry key="com.sun.xml.ws.request.timeout">
+			<value type="java.lang.Integer">60000</value>
+		</entry>
+		<entry key="com.sun.xml.ws.connect.timeout">
+			<value type="java.lang.Integer">60000</value>
+		</entry>
+	</util:map> 	
+
+</beans>
